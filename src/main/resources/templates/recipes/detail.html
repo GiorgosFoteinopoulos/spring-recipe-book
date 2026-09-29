@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${recipe.title}">Recipe</title>
+</head>
+<body>
+
+<p><a th:href="@{/recipes}">&larr; All recipes</a></p>
+
+<h1 th:text="${recipe.title}">Recipe title</h1>
+
+<p>
+    Serves <strong th:text="${recipe.servings}">2</strong>
+    &middot; Ready in <strong th:text="${recipe.prepMinutes} + ' min'">15 min</strong>
+</p>
+
+<h2>Ingredients</h2>
+
+<p th:if="${recipe.ingredients.isEmpty()}">No ingredients listed.</p>
+
+<ul th:unless="${recipe.ingredients.isEmpty()}">
+    <li th:each="ingredient : ${recipe.ingredients}">
+        <span th:text="${ingredient.amount}">200 g</span>
+        <span th:text="${ingredient.name}">Feta</span>
+    </li>
+</ul>
+
+<h2>Instructions</h2>
+
+<p style="white-space: pre-line" th:text="${recipe.instructions}">Instructions</p>
+
+</body>
+</html>
