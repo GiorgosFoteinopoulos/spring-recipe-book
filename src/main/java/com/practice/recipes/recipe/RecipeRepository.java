@@ -8,7 +8,10 @@ import java.util.Optional;
 
 public interface RecipeRepository extends JpaRepository<Recipe, Long> {
 
+    @EntityGraph(attributePaths = "ingredients")
     List<Recipe> findAllByOrderByTitleAsc();
+
+    List<Recipe> findByPrepMinutesLessThanEqualOrderByPrepMinutesAsc(Integer minutes);
 
     @EntityGraph(attributePaths = "ingredients")
     Optional<Recipe> findWithIngredientsById(Long id);

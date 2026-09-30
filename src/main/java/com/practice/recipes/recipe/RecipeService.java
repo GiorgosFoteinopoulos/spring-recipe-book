@@ -15,9 +15,13 @@ public class RecipeService {
         this.recipeRepository = recipeRepository;
     }
     public List<Recipe> findAll() {
-        return recipeRepository.findAll();
+        return recipeRepository.findAllByOrderByTitleAsc();
     }
     public Optional<Recipe> findWithIngredients(Long id) {
         return recipeRepository.findWithIngredientsById(id);
+    }
+
+    public List<Recipe> findQuick(Integer maxMinutes) {
+        return recipeRepository.findByPrepMinutesLessThanEqualOrderByPrepMinutesAsc(maxMinutes);
     }
 }

@@ -8,7 +8,19 @@
 
 <h1>Recipes</h1>
 
-<p th:if="${recipes.isEmpty()}">No recipes yet.</p>
+<form th:action="@{/recipes/quick}" method="get">
+    Ready in at most
+    <input type="number" name="max" min="1" placeholder="minutes">
+    minutes
+    <button type="submit">Find</button>
+</form>
+
+<p th:if="${filterTitle}">
+    Showing <strong th:text="${filterTitle}">filter</strong>
+    (<a th:href="@{/recipes}">show all</a>)
+</p>
+
+<p th:if="${recipes.isEmpty()}">No recipes found.</p>
 
 <table border="1" cellpadding="6" th:unless="${recipes.isEmpty()}">
     <thead>
@@ -16,6 +28,7 @@
         <th>Title</th>
         <th>Servings</th>
         <th>Prep time</th>
+        <th>Ingredients</th>
     </tr>
     </thead>
     <tbody>
@@ -23,6 +36,7 @@
         <td><a th:href="@{/recipes/{id}(id=${recipe.id})}" th:text="${recipe.title}">Title</a></td>
         <td th:text="${recipe.servings}">2</td>
         <td th:text="${recipe.prepMinutes} + ' min'">15 min</td>
+        <td th:text="${recipe.ingredients.size()}">5</td>
     </tr>
     </tbody>
 </table>

@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.server.ResponseStatusException;
 
 @Controller
@@ -32,5 +33,12 @@ public class RecipeController {
                         HttpStatus.NOT_FOUND, "Recipe " + id + " not found"));
         model.addAttribute("recipe", recipe);
         return "recipes/detail";
+    }
+
+    @GetMapping("/quick")
+    public String quick(@RequestParam(name = "max", defaultValue = "20") Integer max, Model model) {
+        model.addAttribute("recipes", recipeService.findQuick(max));
+        model.addAttribute("filterTitle", "Ready in " + max + " minutes or less");
+        return "recipes/list";
     }
 }

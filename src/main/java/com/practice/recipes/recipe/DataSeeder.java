@@ -50,7 +50,21 @@ public class DataSeeder implements CommandLineRunner {
         pancakes.addIngredient(new Ingredient("Sugar", "2 tbsp"));
         pancakes.addIngredient(new Ingredient("Baking powder", "2 tsp"));
 
+        Recipe tzatziki = new Recipe(
+                "Tzatziki",
+                """
+                        Grate the cucumber, squeeze out as much water as possible.
+                        Mix it with yogurt, crushed garlic, olive oil and chopped dill.
+                        Season with salt and chill for at least 30 minutes before serving.""",
+                4, 10
+        );
+        tzatziki.addIngredient(new Ingredient("Greek yogurt", "500 g"));
+        tzatziki.addIngredient(new Ingredient("Cucumber", "1"));
+        tzatziki.addIngredient(new Ingredient("Garlic", "2 cloves"));
+        tzatziki.addIngredient(new Ingredient("Olive oil", "2 tbsp"));
+        tzatziki.addIngredient(new Ingredient("Fresh dill", "1 tbsp, chopped"));
+        tzatziki.addIngredient(new Ingredient("Salt", "a pinch"));
 
-        recipeRepository.saveAll(List.of(salad, pancakes));
+        recipeRepository.saveAll(List.of(salad, pancakes, tzatziki));
     }
 }
