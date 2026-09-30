@@ -8,6 +8,8 @@
 
 <h1>Recipes</h1>
 
+<p><a th:href="@{/recipes/new}">Add a recipe</a></p>
+
 <form th:action="@{/recipes/quick}" method="get">
     Ready in at most
     <input type="number" name="max" min="1" placeholder="minutes">

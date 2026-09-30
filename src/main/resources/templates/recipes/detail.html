@@ -12,8 +12,17 @@
 
 <p>
     Serves <strong th:text="${recipe.servings}">2</strong>
-    &middot; Ready in <strong th:text="${recipe.prepMinutes} + ' min'">15 min</strong>
+    &middot;  Ready in <strong th:text="${recipe.prepMinutes} + ' min'">15 min</strong>
 </p>
+
+<div>
+    <a th:href="@{/recipes/{id}/edit(id=${recipe.id})}">Edit recipe</a>
+    <form th:action="@{/recipes/{id}/delete(id=${recipe.id})}" method="post" style="display:inline">
+        <button type="submit" onclick="return confirm('Delete this recipe and all its ingredients?')">
+            Delete recipe
+        </button>
+    </form>
+</div>
 
 <h2>Ingredients</h2>
 
@@ -23,8 +32,20 @@
     <li th:each="ingredient : ${recipe.ingredients}">
         <span th:text="${ingredient.amount}">200 g</span>
         <span th:text="${ingredient.name}">Feta</span>
+
+        <form th:action="@{/recipes/{id}/ingredients/{ingredientId}/delete(id=${recipe.id}, ingredientId=${ingredient.id})}" method="post" style="display:inline">
+            <button type="submit">Remove</button>
+        </form>
     </li>
 </ul>
+
+<h3>Add an ingredient</h3>
+
+<form th:action="@{/recipes/{id}/ingredients(id=${recipe.id})}" method="post">
+    <input type="text" name="amount" placeholder="Amount, e.g. 200 g">
+    <input type="text" name="name" placeholder="Ingredient" required>
+    <button type="submit">Add</button>
+</form>
 
 <h2>Instructions</h2>
 
