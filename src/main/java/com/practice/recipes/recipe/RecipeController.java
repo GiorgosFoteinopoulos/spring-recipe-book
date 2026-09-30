@@ -1,11 +1,12 @@
 package com.practice.recipes.recipe;
 
 
+import jakarta.validation.Valid;
 import org.springframework.ui.Model;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
+
 
 @Controller
 @RequestMapping("/recipes")
@@ -23,14 +24,6 @@ public class RecipeController {
         return "recipes/list";
     }
 
-    @GetMapping("/{id}")
-    public String detail(@PathVariable("id") Long id, Model model) {
-        Recipe recipe = recipeService.findWithIngredients(id)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Recipe " + id + " not found"));
-        model.addAttribute("recipe", recipe);
-        return "recipes/detail";
-    }
 
     @GetMapping("/quick")
     public String quick(@RequestParam(name = "max", defaultValue = "20") Integer max, Model model) {
@@ -39,26 +32,42 @@ public class RecipeController {
         return "recipes/list";
     }
 
+    @GetMapping("/{id}")
+    public String detail(@PathVariable("id") Long id, Model model) {
+        model.addAttribute("recipe", loadWithIngredients(id));
+        model.addAttribute("ingredientForm", new IngredientForm());
+        return "recipes/detail";
+    }
+
+
     @GetMapping("/new")
     public String newForm(Model model) {
-        model.addAttribute("recipe", new Recipe());
+        model.addAttribute("recipeForm", new RecipeForm());
         return "recipes/form";
     }
 
     @PostMapping
-    public String create(@ModelAttribute Recipe recipe) {
-        Recipe saved = recipeService.create(recipe);
+    public String create(@Valid @ModelAttribute("recipeForm") RecipeForm form, BindingResult bindingResult) {
+
+        if (bindingResult.hasErrors()) {
+            return "recipes/form";
+        }
+        Recipe saved = recipeService.create(form);
         return "redirect:/recipes/" + saved.getId();
     }
     @GetMapping("/{id}/edit")
     public String editForm(@PathVariable("id") Long id, Model model) {
-        model.addAttribute("recipe", recipeService.getById(id));
+        model.addAttribute("recipeForm", RecipeForm.from(recipeService.getById(id)));
         return "recipes/form";
     }
 
     @PostMapping("/{id}")
-    public String update(@PathVariable("id") Long id, @ModelAttribute Recipe recipe) {
-        recipeService.update(id, recipe);
+    public String update(@PathVariable("id") Long id, @Valid @ModelAttribute("recipeForm") RecipeForm form, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            form.setId(id);
+            return "recipes/form";
+        }
+        recipeService.update(id, form);
         return "redirect:/recipes/" + id;
     }
 
@@ -70,9 +79,14 @@ public class RecipeController {
 
     @PostMapping("/{id}/ingredients")
     public String addIngredient(@PathVariable("id") Long id,
-                                @RequestParam("name") String name,
-                                @RequestParam(name = "amount", defaultValue = "") String amount) {
-        recipeService.addIngredient(id, name, amount);
+                                @Valid @ModelAttribute("ingredientForm") IngredientForm form,
+                                BindingResult bindingResult,
+                                Model model) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("recipe", loadWithIngredients(id));
+            return "recipes/detail";
+        }
+        recipeService.addIngredient(id, form);
         return "redirect:/recipes/" + id;
     }
 
@@ -81,5 +95,10 @@ public class RecipeController {
                                    @PathVariable("ingredientId") Long ingredientId) {
         recipeService.removeIngredient(id, ingredientId);
         return "redirect:/recipes/" + id;
+    }
+
+    private Recipe loadWithIngredients(Long id) {
+        return recipeService.findWithIngredients(id)
+                .orElseThrow(() -> new NotFoundException("Recipe " + id + " not found"));
     }
 }

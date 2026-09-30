@@ -1,6 +1,7 @@
 package com.practice.recipes.recipe;
 
 
+import jakarta.validation.Valid;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,6 +16,7 @@ public class RecipeService {
     public RecipeService(RecipeRepository recipeRepository) {
         this.recipeRepository = recipeRepository;
     }
+
     public List<Recipe> findAll() {
         return recipeRepository.findAllByOrderByTitleAsc();
     }
@@ -32,50 +34,35 @@ public class RecipeService {
     }
 
     @Transactional
-    public Recipe create(Recipe recipe) {
-        recipe.setId(null);
+    public Recipe create(RecipeForm form) {
+        Recipe recipe = new Recipe(
+                form.getTitle().trim(),
+                form.getInstructions().trim(),
+                form.getServings(),
+                form.getPrepMinutes());
         return recipeRepository.save(recipe);
     }
 
     @Transactional
-    public Recipe update(Long id, Recipe form) {
+    public Recipe update(Long id, RecipeForm form) {
         Recipe existing = getById(id);
-        existing.setTitle(form.getTitle());
+        existing.setTitle(form.getTitle().trim());
         existing.setServings(form.getServings());
         existing.setPrepMinutes(form.getPrepMinutes());
-        existing.setInstructions(form.getInstructions());
+        existing.setInstructions(form.getInstructions().trim());
         return existing;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
     }
 
     @Transactional
     public void delete(Long id) {
-        Recipe existing = getById(id);
-        recipeRepository.delete(existing);
+        recipeRepository.delete(getById(id));
     }
 
     @Transactional
-    public void addIngredient(Long recipeId, String name, String amount) {
+    public void addIngredient(Long recipeId, IngredientForm form) {
         Recipe recipe = getById(recipeId);
-        recipe.addIngredient(new Ingredient(name.trim(), amount.trim()));
+        String amount = form.getAmount() == null ? "" : form.getAmount().trim();
+        recipe.addIngredient(new Ingredient(form.getName().trim(), amount));
     }
 
     @Transactional

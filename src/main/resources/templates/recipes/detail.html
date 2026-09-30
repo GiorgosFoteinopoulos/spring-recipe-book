@@ -3,6 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <title th:text="${recipe.title}">Recipe</title>
+    <style>
+        .error { color: #b00020}
+        .field-error { border: 2px solid #b00020;}
+    </style>
 </head>
 <body>
 
@@ -41,10 +45,13 @@
 
 <h3>Add an ingredient</h3>
 
-<form th:action="@{/recipes/{id}/ingredients(id=${recipe.id})}" method="post">
-    <input type="text" name="amount" placeholder="Amount, e.g. 200 g">
-    <input type="text" name="name" placeholder="Ingredient" required>
+<form th:action="@{/recipes/{id}/ingredients(id=${recipe.id})}" th:object="${ingredientForm}" method="post" novalidate>
+
+    <input type="text" th:field="*{amount}" th:errorclass="field-error" placeholder="Amount, e.g. 200 g">
+    <input type="text" th:field="*{name}" th:errorclass="field-error" placeholder="Ingredient" required>
     <button type="submit">Add</button>
+    <div class="error" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Name error</div>
+    <div class="error" th:if="${#fields.hasErrors('amount')}" th:errors="*{amount}">Amount error</div>
 </form>
 
 <h2>Instructions</h2>
