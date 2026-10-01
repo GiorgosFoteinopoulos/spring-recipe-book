@@ -10,6 +10,8 @@
 </head>
 <body>
 
+<div th:replace="~{fragments/header :: header}"></div>
+
 <p><a th:href="@{/recipes}">&larr; All recipes</a></p>
 
 <h1 th:text="${recipe.title}">Recipe title</h1>

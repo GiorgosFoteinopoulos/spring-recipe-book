@@ -1,6 +1,9 @@
 package com.practice.recipes.recipe;
 
+import com.practice.recipes.user.AppUser;
+import com.practice.recipes.user.AppUserRepository;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -9,9 +12,13 @@ import java.util.List;
 public class DataSeeder implements CommandLineRunner {
 
     private final RecipeRepository recipeRepository;
+    private final AppUserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public DataSeeder(RecipeRepository recipeRepository) {
+    public DataSeeder(RecipeRepository recipeRepository, AppUserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.recipeRepository = recipeRepository;
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -19,6 +26,10 @@ public class DataSeeder implements CommandLineRunner {
         if (recipeRepository.count() > 0) {
             return;
         }
+
+        AppUser demo = userRepository.save(new AppUser("demo", passwordEncoder.encode("demo1234")));
+        AppUser anna = userRepository.save(new AppUser("anna", passwordEncoder.encode("anna1234")));
+
 
         Recipe salad = new Recipe(
                 "Greek salad",
@@ -28,6 +39,7 @@ public class DataSeeder implements CommandLineRunner {
                 Place the feta on top, sprinkle with oregano and drizzle with olive oil.
                         """,
                 2, 25);
+        salad.setOwner(demo);
         salad.addIngredient(new Ingredient("Tomatoes", "3 medium"));
         salad.addIngredient(new Ingredient("Cucumber", "1"));
         salad.addIngredient(new Ingredient("Red onion", "1/2"));
@@ -43,6 +55,7 @@ public class DataSeeder implements CommandLineRunner {
                 Add the milk and eggs and whisk until smooth.
                 Cook ladlefuls in a hot, lightly oiled pan, about 2 minutes per side.
                         """, 4, 25);
+        pancakes.setOwner(demo);
 
         pancakes.addIngredient(new Ingredient("Flour", "250 g"));
         pancakes.addIngredient(new Ingredient("Milk", "300 ml"));
@@ -58,6 +71,7 @@ public class DataSeeder implements CommandLineRunner {
                         Season with salt and chill for at least 30 minutes before serving.""",
                 4, 10
         );
+        tzatziki.setOwner(demo);
         tzatziki.addIngredient(new Ingredient("Greek yogurt", "500 g"));
         tzatziki.addIngredient(new Ingredient("Cucumber", "1"));
         tzatziki.addIngredient(new Ingredient("Garlic", "2 cloves"));
@@ -65,6 +79,22 @@ public class DataSeeder implements CommandLineRunner {
         tzatziki.addIngredient(new Ingredient("Fresh dill", "1 tbsp, chopped"));
         tzatziki.addIngredient(new Ingredient("Salt", "a pinch"));
 
-        recipeRepository.saveAll(List.of(salad, pancakes, tzatziki));
+
+        Recipe lemonade = new Recipe(
+                "Lemonade",
+                """
+                        Squeeze the lemons,
+                        Stir the juice with the sugar until it dissolves.
+                        Add cold water and ice, and serve.""",
+                4, 10
+        );
+        lemonade.setOwner(anna);
+        lemonade.addIngredient(new Ingredient("Lemons", "4 big"));
+        lemonade.addIngredient(new Ingredient("Sugar", "100 g"));
+        lemonade.addIngredient(new Ingredient("Ice", "a handful"));
+
+
+
+        recipeRepository.saveAll(List.of(salad, pancakes, tzatziki, lemonade));
     }
 }

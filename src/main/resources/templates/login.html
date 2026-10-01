@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Log in</title>
+    <style>
+        .error { color : #b00020; }
+        .info { color: #1b5e20; }
+    </style>
+</head>
+<body>
+
+<h1>Recipe book</h1>
+<h2>Log in</h2>
+
+
+<p class="error" th:if="${param.error}">Wrong username or password.</p>
+<p class="info" th:if="${param.logout}">You have been logged out.</p>
+<p class="info" th:if="${param.registered}">Your account was created. You can log in now.</p>
+
+
+<form th:action="@{/login}" method="post">
+    <p>
+        <label for="username">Username</label><br>
+        <input type="text" id="username" name="username" autofocus required>
+    </p>
+    <p>
+        <label for="password">Password</label><br>
+        <input type="password" id="password" name="password" required>
+    </p>
+    <button type="submit">Log in</button>
+</form>
+
+<p>No account yet? <a th:href="@{/register}">Register</a></p>
+
+</body>
+</html>

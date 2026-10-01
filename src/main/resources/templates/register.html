@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Register</title>
+    <style>
+        .error { color: #b00020; }
+        .field-error { border: 2px solid #b00020; }
+    </style>
+</head>
+<body>
+
+<h1>Recipe book</h1>
+<h2>Create an account</h2>
+
+<form th:action="@{/register}" th:object="${registrationForm}" method="post" novalidate>
+    <p class="error" th:if="${#fields.hasAnyErrors()}">Please correct the fields marked below</p>
+
+    <p>
+        <label for="username">Username</label><br>
+        <input type="text" id="username" th:field="*{username}" th:errorclass="field-error" autofocus>
+        <br><span class="error" th:if="${#fields.hasErrors('username')}" th:errors="*{username}">Username error.</span>
+    </p>
+
+    <p>
+        <label for="password">Password (at least 8 characters)</label><br>
+        <input type="password" id="password" th:field="*{password}" th:errorclass="field-error">
+        <br><span class="error" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Password error.</span>
+    </p>
+
+    <p>
+        <label for="confirmPassword">Repeat Password</label><br>
+        <input type="password" id="confirmPassword" th:field="*{confirmPassword}" th:errorclass="field-error">
+        <br><span class="error" th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}">Confirm error.</span>
+    </p>
+
+    <button type="submit">Register</button>
+</form>
+
+<p>Already registered? <a th:href="@{/login}">Log in</a></p>
+
+
+</body>
+</html>

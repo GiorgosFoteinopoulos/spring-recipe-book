@@ -1,6 +1,7 @@
 package com.practice.recipes.recipe;
 
 
+import com.practice.recipes.user.AppUser;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -25,6 +26,10 @@ public class Recipe {
     @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("id ASC")
     private List<Ingredient> ingredients = new ArrayList<>();
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "owner_id", nullable = false)
+    private AppUser owner;
 
     public Recipe() {
 
@@ -79,6 +84,12 @@ public class Recipe {
     }
     public List<Ingredient> getIngredients() {
         return ingredients;
+    }
+    public AppUser getOwner() {
+        return owner;
+    }
+    public void setOwner(AppUser owner) {
+        this.owner = owner;
     }
 }
 
