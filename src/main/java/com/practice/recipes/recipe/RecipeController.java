@@ -6,6 +6,7 @@ import org.springframework.ui.Model;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
 
@@ -57,11 +58,13 @@ public class RecipeController {
     @PostMapping
     public String create(@Valid @ModelAttribute("recipeForm") RecipeForm form,
                          BindingResult bindingResult,
-                         Principal principal) {
+                         Principal principal,
+                         RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
             return "recipes/form";
         }
         Recipe saved = recipeService.create(form, principal.getName());
+        redirectAttributes.addFlashAttribute("successMessage", "Recipe created successfully!");
         return "redirect:/recipes/" + saved.getId();
     }
 
@@ -77,20 +80,22 @@ public class RecipeController {
     public String update(@PathVariable("id") Long id,
                          @Valid @ModelAttribute("recipeForm") RecipeForm form,
                          BindingResult bindingResult,
-                         Principal principal) {
+                         Principal principal, RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
             form.setId(id);
             return "recipes/form";
         }
         recipeService.update(id, form, principal.getName());
+        redirectAttributes.addFlashAttribute("successMessage", "Recipe saved.");
         return "redirect:/recipes/" + id;
     }
 
     // ---------------- Delete ----------------
 
     @PostMapping("/{id}/delete")
-    public String delete(@PathVariable("id") Long id, Principal principal) {
+    public String delete(@PathVariable("id") Long id, Principal principal, RedirectAttributes redirectAttributes) {
         recipeService.delete(id, principal.getName());
+        redirectAttributes.addFlashAttribute("successMessage", "Recipe deleted.");
         return "redirect:/recipes";
     }
 
